@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 align="center">Report Generation
+</h4>
+<p></p>
+<div class="container" style="border-radius: 5px; background-color: #f2f2f2; padding: 20px;">
+    <form method="POST">
+        <div class="row">
+            <div class="col-25">
+                <label for="startTime"><b>Start Time</b></label>
+                <input type="date" placeholder="Enter Start Time" name="startTime" id="startTime"required>
+            </div>
+            <div class="col-25">
+                <label for="endTime"><b>End Time</b></label>
+                <input type="date" placeholder="Enter End Time" name="endTime" id="endTime" required>
+            </div>
+            <div class="col-25">
+                <label for="timeQueryType"><b>Time Query Time</b></label>
+                <select id="timeQueryType" name="timeQueryType" required>
+                    <option value="reportTimeFrame">Report Time Frame</option>
+                    <option value="executedTime" selected>Executed Time</option>
+                </select>
+            </div>
+            <div class="col-25">
+                <label for="reportMimeType"><b>Report Mime Type</b></label>
+                <select id="reportMimeType" name="reportMimeType" required>
+                    <option value="application/xml">XML</option>
+                    <option value="executtext/csv" selected>CSV</option>
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="registerbtn">Search Report</button>
+    </form>
+    <table  class="table" id="report" style="display: flex; flex-wrap: wrap; font-size: 14px; overflow: auto;">
+        <tr>
+            <td>Download</td>
+            <td>reportDefinitionId</td>
+            <td>reportName</td>
+            <td>reportMimeType</td>
+            <td>reportFrequency</td>
+            <td>status</td>
+            <td>reportStartTime</td>
+            <td>reportEndTime</td>
+            <td>timezone</td>
+            <td>reportId</td>
+            <td>organizationId</td>
+            <td>queuedTime</td>
+            <td>reportGenerationTime</td>
+            <td>reportCompletedTime</td>
+            <td>subscriptionType</td>
+            <td>groupId</td>
+            <td></td>
+        </tr>
+        {% for row in return_data.report_search_results %}
+        <tr>
+            <td><button type="button" onclick="downloadReport('{{ row.report_id }}')" style="background-color: transparent; border: none; color: grey;"><i class="fa fa-cloud-download"></i></button></td>
+            {% for name, value in row.__dict__.items() %}
+                {% if name != "_link" %}
+                <td>{{ value }}</td>
+                {% endif %}
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+</body>
+<script> 
+    window.onload=function(){
+        var sdate = new Date();
+        sdate.setDate(sdate.getDate() - 7);
+        var sdd = String(sdate.getDate()).padStart(2, '0');
+        var smm = String(sdate.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var syyyy = sdate.getFullYear();
+
+        var edate = new  Date();
+        edate.setDate(edate.getDate());
+        var edd = String(edate.getDate()).padStart(2, '0');
+        var emm = String(edate.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var eyyyy = edate.getFullYear();
+
+        document.getElementById("startTime").defaultValue = syyyy + "-" + smm + "-" + sdd;
+        document.getElementById("endTime").defaultValue = eyyyy + "-" + emm + "-" + edd;
+    }
+</script>
+<script>
+    function downloadReport(reportId) {
+        console.log(reportId);
+        const request = new XMLHttpRequest()
+        request.open("POST", `/views/downloadReport/${reportId}`)
+                
+        return request.send();
+    }
+</script>
+{% endblock %}

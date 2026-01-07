@@ -1,0 +1,39 @@
+<h1>Please wait...</h1>
+
+<p>The request is being processed. You may be redirected to your bank's website. It might take a few seconds.</p>
+<p>Please do not refresh the page or click the "Back" or "Close" button of your browser.</p>
+
+<form id="authentication_form" method="POST" action={{action}}>
+    <input id="transientToken" name="transientToken" type=hidden value={{transientToken}}>
+    <input id="referenceNumber" name="referenceNumber" type=hidden value={{referenceNumber}}>
+    <input id="referenceId" name="referenceId" type=hidden value={{referenceId}}>
+    <input id="product" name="product" type=hidden value={{product}}>
+</form>
+
+
+<iframe id="cardinal_collection_iframe" name="collectionIframe" height="1" width="1" style="display: none;">
+</iframe>
+<form id="cardinal_collection_form" method="POST" target="collectionIframe" action={{deviceDataCollectionURL}}>
+    <input id="cardinal_collection_form_input" type="hidden" name="JWT" value={{accessToken}}>
+</form>
+<script>
+    window.onload = function() {
+        var cardinalCollectionForm = document.querySelector('#cardinal_collection_form');
+        if(cardinalCollectionForm) {// form exists
+            cardinalCollectionForm.submit();
+        }
+    }
+
+    window.addEventListener("message", function(event) {
+        if (event.origin === "https://centinelapistag.cardinalcommerce.com" || event.origin === "https://centinelapi.cardinalcommerce.com") {
+        console.log("###Success!###")
+        console.log(event.data);
+        var authenticationForm = document.querySelector('#authentication_form');
+        if(authenticationForm) {// form exists
+            authenticationForm.submit();
+        }
+         }  else {
+            console.log("###Failed!!!###");
+         }
+        }, false);
+</script>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cybersource Playground</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+    integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="icon" type="image/x-icon" href="/static/apple-touch-icon.png">
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+
+<body>
+  <nav class="navbar navbar-light bg-white border-bottom shadow-sm py-2">
+    <div class="container-fluid d-flex align-items-center flex-nowrap">
+
+      <a class="navbar-brand nav-brand mr-4" href="/">
+        cybersource <span class="brand-sub">Playground</span>
+      </a>
+
+      <div class="nav-links-scrollable flex-grow-1">
+        <ul class="navbar-nav d-flex flex-row nav-links list-unstyled mb-0">
+          {% if session.logged_in %}
+          <li class="nav-item"><a class="nav-link" href="/views/rest">REST</a></li>
+          <li class="nav-item"><a class="nav-link" href="/views/secure-acceptance">SA</a></li>
+          <li class="nav-item"><a class="nav-link" href="/views/sop">SOP</a></li>
+          <li class="nav-item"><a class="nav-link" href="/views/soap">SOAP</a></li>
+          <li class="nav-item"><a class="nav-link" href="/views/uci">Unified</a></li>
+          <li class="nav-item"><a class="nav-link" href="/views/microform">Microform</a></li>
+          <li class="nav-item"><a class="nav-link" href="/views/ticketing">Ticketing</a></li>
+          <li class="nav-item"><a class="nav-link" href="/views/mpgs-hosted-checkout">MPGS</a></li>
+          <li class="nav-item"><a class="nav-link" href="/views/report">Reports</a></li>
+          <li class="nav-item"><a class="nav-link" href="/views/token">Profile</a></li>
+          {% else %}
+          <li class="nav-item"><a class="nav-link" href="/views/login">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="/views/register">Register</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      {% if session.logged_in %}
+      <div class="nav-user d-flex align-items-center ml-3">
+        <div class="user-info mr-3 d-none d-xl-flex flex-column text-right">
+          <span class="user-email font-weight-bold">{{ session.user_email }}</span>
+          <span class="session-id text-muted">
+            ID: {{ session.session_id[:8] if session.session_id else 'N/A' }}...
+          </span>
+        </div>
+        <a href="{{ url_for('views.logout') }}" class="btn-logout">Logout</a>
+      </div>
+      {% endif %}
+    </div>
+  </nav>
+
+  <p></p>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for category, message in messages %}
+  <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show shadow-sm"
+    role="alert">
+    {{ message }}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+  <main class="py-4">
+    {% block content %}{% endblock %}
+  </main>
+
+  <script>
+    setTimeout(() => {
+      document.querySelectorAll('[role="alert"]').forEach(function (alert) {
+        $(alert).alert('close');
+      })
+    }, 1000)
+  </script>
+  <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+</body>
+
+</html>

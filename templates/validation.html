@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 align="center">Validation</h4>
+<p></p>
+<div class="container" style="  border-radius: 5px; background-color: #f2f2f2; padding: 20px;">
+    <table class="table" id="token">
+        <tr>
+            <td>transaction_id</td>
+            <td>MD</td>
+            <td>id</td>
+        </tr>
+        <tr>
+            <td>{{ transaction_id }}</td>
+            <td>{{ md }}</td>
+            <td>{{ id }}</td>
+        </tr>
+    </table>
+</div>
+
+</body>
+{% endblock %}

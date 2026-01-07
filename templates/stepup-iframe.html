@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<body>
+<iframe name="step-up-iframe" height="800" width="100%"> </iframe>
+<!--<form id="step-up-form" target="step-up-iframe" method="post" action={{stepUpUrl}}>-->
+<!--<form id="step-up-form" target="_parent" method="post" action={{stepUpUrl}}>-->
+<form id="step-up-form" method="post" action={{stepUpUrl}}>
+    <input type="hidden" name="JWT" value={{accessToken}}>
+    <input type="hidden" name="MD" value={{md}}>
+</form>
+</body>
+<script>
+    window.onload = function() {
+        var stepUpForm = document.querySelector('#step-up-form');
+        if(stepUpForm)// Step-Up form exists
+            stepUpForm.submit();
+    }
+
+    // window.addEventListener("message", function(event) {
+    //     if (event.origin === "https://centinelapistag.cardinalcommerce.com") {
+    //     console.log("###Success!###")
+    //     console.log(event.data);
+    //      }  else {
+    //         console.log("###Failed!!!###");
+    //      }
+    //     }, false);
+</script>
+</html>

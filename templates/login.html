@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 align="center">Login</h4>
+<p></p>
+<form method="POST">
+    <div class="container">
+        <p>Please fill in this form to login an account.</p>
+        <hr>
+    
+        <label for="user_email"><b>Email</b></label>
+        <input type="text" placeholder="Enter Email" name="user_email" id="user_email" required>
+    
+        <label for="psw"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="psw" id="psw" required>
+        <hr>
+    
+        <button type="submit" class="registerbtn">Login</button>
+    </div>
+</form>
+
+</body>
+{% endblock %}

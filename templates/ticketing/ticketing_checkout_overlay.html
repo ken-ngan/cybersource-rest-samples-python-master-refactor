@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="alert alert-info shadow-sm mb-3">
+        <strong>HSBC Red Credit Card (BIN 400000) Exclusive Offer!</strong> 20% off movie tickets (Fridays, Saturdays,
+        and Sundays)
+    </div>
+    <div class="alert alert-warning shadow-sm mb-4">
+        <i class="fa fa-clock-o"></i> <strong>The seat(s) will be released in: </strong><span id="timer"
+            class="font-weight-bold"></span>
+    </div>
+
+    <h4 class="text-center mb-2" style="color: var(--pp-blue-dark); font-weight: 700;">Guest Purchase</h4>
+    <p class="text-center text-muted mb-4">Complete your purchase via our secure overlay checkout</p>
+
+    <form id="payment_form" method="POST">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="container shadow-sm">
+                    <p class="text-muted small mb-4">Used for confirmation email and e-ticket(s)</p>
+                    <div class="row">
+                        <div id="paymentDetailsSection" class="col-md-6">
+                            <h5 class="mb-3" style="color: var(--pp-blue-dark);"><i class="fa fa-user mr-2"></i>Guest
+                                Information</h5>
+
+                            <input type="number" id="count_down_time" name="count_down_time" hidden
+                                value="{{ count_down_time }}">
+
+                            <label for="bill_to_forename">First Name</label>
+                            <input type="text" id="bill_to_forename" name="bill_to_forename" value="Ken" required>
+
+                            <label for="bill_to_surname">Last Name</label>
+                            <input type="text" id="bill_to_surname" name="bill_to_surname" value="Ngan" required>
+
+                            <label for="bill_to_email">Email</label>
+                            <input type="email" id="bill_to_email" name="bill_to_email" value="ken@example.com"
+                                required>
+
+                            <label for="bill_to_phone">Phone Number</label>
+                            <input type="text" id="bill_to_phone" name="bill_to_phone" value="91360955"
+                                onchange="trimNumber(this)">
+                        </div>
+
+                        <div class="col-md-6 border-left pl-md-4">
+                            <h5 class="mb-3" style="color: var(--pp-blue-dark);"><i
+                                    class="fa fa-map-marker mr-2"></i>Billing Address</h5>
+
+                            <label for="bill_to_address_line1">Address</label>
+                            <input type="text" id="bill_to_address_line1" name="bill_to_address_line1"
+                                value="27F Manhattan Place" required>
+
+                            <label for="bill_to_address_city">City</label>
+                            <input type="text" id="bill_to_address_city" name="bill_to_address_city" value="Kowloon Bay"
+                                required>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="bill_to_address_country">Country</label>
+                                    <input type="text" id="bill_to_address_country" name="bill_to_address_country"
+                                        value="HK" required>
+                                </div>
+                                <div class="col-6">
+                                    <label for="bill_to_address_postal_code">Zip</label>
+                                    <input type="text" id="bill_to_address_postal_code"
+                                        name="bill_to_address_postal_code" value="00000" required>
+                                </div>
+                            </div>
+
+                            <div class="mt-4 pt-3 border-top">
+                                <h6 class="font-weight-bold" style="color: var(--pp-blue-bright);">Special Offers</h6>
+                                <div class="custom-control custom-radio mt-2">
+                                    <input type="radio" id="hsbc_red" name="accepted_offer" class="custom-control-input"
+                                        value="hsbc_red">
+                                    <label class="custom-control-label small" for="hsbc_red">HSBC Red Credit Card: 20%
+                                        off Ticket Offer (Friday-Sunday)</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" id="submit" name="submit" class="btn btn-primary mt-4 py-3">Continue to Secure
+                        Checkout</button>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="container shadow-sm">
+                    <h5 class="mb-4 d-flex justify-content-between align-items-center"
+                        style="color: var(--pp-blue-dark); font-weight: 700;">
+                        <span><i class="fa fa-ticket mr-2"></i>Booking Summary</span>
+                    </h5>
+
+                    <table class="table table-sm table-borderless mb-0" style="font-size: 0.9rem;">
+                        <tbody>
+                            <tr>
+                                <td class="text-muted">Cinema</td>
+                                <td class="text-right font-weight-bold">THE SOUTHSIDE</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Version</td>
+                                <td class="text-right font-weight-bold">2D</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Date</td>
+                                <td class="text-right font-weight-bold">22 Jun 2024 (Sat)</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Time</td>
+                                <td class="text-right font-weight-bold">04:20 PM</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">House No.</td>
+                                <td class="text-right font-weight-bold">House 4</td>
+                            </tr>
+                            <tr>
+                                <td class="text-muted">Seat(s)</td>
+                                <td class="text-right font-weight-bold">E3, E2</td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr class="border-top mt-3">
+                                <td class="pt-3 font-weight-bold" style="font-size: 1.1rem;">Total</td>
+                                <td class="pt-3 text-right">
+                                    <span class="font-weight-bold"
+                                        style="color: var(--pp-blue-dark); font-size: 1.3rem;">
+                                        $<input type="number" id="amount" name="amount" value="10" readonly
+                                            class="total-input-ticket">
+                                    </span>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    .total-input-ticket {
+        border: none;
+        background: transparent;
+        text-align: right;
+        font-weight: 700;
+        width: 60px;
+        outline: none;
+        color: var(--pp-blue-dark);
+        pointer-events: none;
+    }
+</style>
+
+<script>
+    // Correctly parsing the countdown from the Python datetime object
+    var count_down_time = new Date({{ count_down_time }});
+</script>
+<script src="/static/checkout.js"></script>
+<script src="/static/timer.js"></script>
+{% endblock %}

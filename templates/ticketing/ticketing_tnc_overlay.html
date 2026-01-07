@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid px-4">
+    <div class="alert alert-info shadow-sm mb-3">
+        <strong>HSBC Red Credit Card (BIN 400000) Exclusive Offer!</strong> 20% off movie tickets (Fridays, Saturdays, and Sundays)
+    </div>
+    <div class="alert alert-warning shadow-sm mb-4">
+        <i class="fa fa-clock-o"></i> <strong>The seat(s) will be released in: </strong><span id="timer" class="font-weight-bold"></span>
+    </div>
+
+    <div id="overlay" onclick="off()">
+        <div class="overlay-content shadow-lg">
+            <div class="overlay-header d-flex justify-content-between align-items-center p-3 border-bottom bg-light">
+                <h6 class="m-0 font-weight-bold text-primary">Secure Payment Gateway</h6>
+                <button type="button" class="close" onclick="off()">&times;</button>
+            </div>
+            <iframe id="frameId" name="frameId" class="checkout-iframe"></iframe>
+        </div>
+    </div>
+
+    <form name="secure_payment_form" method="POST" action="{{ url }}" target="frameId">
+        {% for name, value in fields.items() %}
+            <input type="hidden" name="{{ name }}" value="{{ value }}" />
+        {% endfor %}
+        <input type="hidden" name="signature" value="{{ signature }}" />
+        <input type="number" id="count_down_time" name="count_down_time" hidden value="{{ count_down_time }}">
+
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="container shadow-sm h-100">
+                    <h5 class="mb-4" style="color: var(--pp-blue-dark); font-weight: 700;">
+                        <i class="fa fa-credit-card mr-2"></i>Payment Details
+                    </h5>
+                    
+                    <label>Accepted Cards</label>
+                    <div class="icon-container mb-4">
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="visa" name="card_type" class="custom-control-input" value="001" checked>
+                            <label class="custom-control-label" for="visa"><i class="fa fa-cc-visa text-navy" style="font-size: 28px;"></i></label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="mastercard" name="card_type" class="custom-control-input" value="002">
+                            <label class="custom-control-label" for="mastercard"><i class="fa fa-cc-mastercard text-danger" style="font-size: 28px;"></i></label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="card_number">Credit Card Number</label>
+                        <input type="text" id="card_number" name="card_number" class="form-control" placeholder="1111 2222 3333 4444" onchange="trimNumber(this)" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-7">
+                            <label>Expiry Date</label>
+                            <input type="text" name="card_expiry_date" class="form-control" placeholder="MM-YYYY" required>
+                        </div>
+                        <div class="col-5">
+                            <label for="card_cvn">CVV</label>
+                            <input type="text" id="card_cvn" name="card_cvn" class="form-control" placeholder="123" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="container shadow-sm h-100 d-flex flex-column">
+                    <h5 class="mb-4" style="color: var(--pp-blue-dark); font-weight: 700;">
+                        <i class="fa fa-file-text-o mr-2"></i>Terms & Conditions
+                    </h5>
+                    
+                    <div class="tnc-scrollbox flex-grow-1 mb-4 p-3 border rounded bg-light small text-muted">
+                        <p class="font-weight-bold text-dark">Please review the terms below before proceeding.</p>
+                        <hr>
+                        <p>By ordering refreshment and/or purchasing a ticket and/or entering the Cinema premises, you agree to be bound by these General Terms & Conditions applicable to ABC Cinemas.</p>
+                        <h6>Ticketing & Concession</h6>
+                        <ul class="pl-3">
+                            <li>Tickets sold are non-refundable, non-exchangeable, and void if altered.</li>
+                            <li>Please check the transaction amount before payment.</li>
+                            <li>Unauthorized resale of tickets is strictly prohibited.</li>
+                        </ul>
+                    </div>
+                    
+                    <button onclick="on()" type="submit" id="submit" name="submit" class="btn btn-primary btn-block py-3 font-weight-bold">
+                        Agree & Pay Securely
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<style>
+    /* Overlay Styles */
+    #overlay {
+        position: fixed;
+        display: none;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-color: rgba(0,0,0,0.6);
+        backdrop-filter: blur(4px);
+        z-index: 2000;
+    }
+    .overlay-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 90%;
+        max-width: 600px;
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    .checkout-iframe {
+        width: 100%;
+        height: 500px;
+        border: none;
+    }
+    /* T&C Scrollbox */
+    .tnc-scrollbox {
+        max-height: 250px;
+        overflow-y: auto;
+        line-height: 1.6;
+    }
+    .text-navy { color: #000080; }
+</style>
+
+<script>
+    var count_down_time = new Date({{ count_down_time }});
+    
+    function on() {
+        document.getElementById("overlay").style.display = "block";
+    }
+    
+    function off() {
+        document.getElementById("overlay").style.display = "none";
+    }
+
+    // Receipt polling and redirect logic
+    var frame = document.getElementById('frameId'); 
+    frame.onload = function(e){
+        try {
+            var frame_href = frame.contentWindow.location.href;
+            if(frame_href.includes('{{ override_custom_receipt_page }}')) {
+                setTimeout(function() {
+                    window.location.href = '/views/ticketing-receipt-overlay/{{ reference_number }}';
+                }, 2000);
+            }
+        } catch(err) {
+            // Cross-origin prevents reading URL until it hits your domain
+            console.log("Waiting for Secure Acceptance response...");
+        }
+    };
+</script>
+<script src="/static/checkout.js"></script>
+<script src="/static/timer.js"></script>
+{% endblock %}

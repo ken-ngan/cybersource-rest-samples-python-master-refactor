@@ -1,0 +1,9 @@
+2025-01-22 17:00:12 - Authorization - INFO - Using Request Target:   /pts/v2/payments
+2025-01-22 17:00:12 - Authorization - INFO - Authentication Type:   http_signature
+2025-01-22 17:00:12 - Authorization - INFO - Request-Type:      POST
+2025-01-22 17:00:12 - Authorization - INFO - Content-Type:   application/json
+2025-01-22 17:00:12 - Authorization - INFO - v-c-merchant-id:   gpproduct
+2025-01-22 17:00:12 - Authorization - INFO - Date:   Wed, 22 Jan 2025 09:00:12 GMT
+2025-01-22 17:00:12 - Authorization - INFO - Host:   api.cybersource.com
+2025-01-22 17:00:12 - Authorization - INFO - Digest:SHA-256=I5Lku0d8L8SlwMQfhRPUdZOj6vsTcfEtCmPsVjfynHw=
+2025-01-22 17:00:12 - Authorization - INFO - Signature:     keyid="7556c6a7-4c6b-44f2-ab84-226d457ddc73", algorithm="HmacSHA256", headers="host date request-target digest v-c-merchant-id", signature="t3A/UkSj92SzSTQDtHzcH7o28jwHZ5Lc57YqK32MufY="

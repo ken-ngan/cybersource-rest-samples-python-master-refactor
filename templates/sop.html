@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid px-4">
+    <h4 class="text-center mb-4" style="color: var(--pp-blue-dark); font-weight: 700;">SOP Checkout (Silent Order POST)
+    </h4>
+
+    <form id="payment_form" method="POST">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="container shadow-sm">
+                    <div class="row">
+                        <div id="paymentDetailsSection" class="col-md-6">
+                            <h5 class="mb-3" style="color: var(--pp-blue-dark);"><i
+                                    class="fa fa-address-card mr-2"></i>Billing Address</h5>
+
+                            <label for="bill_to_forename">First Name</label>
+                            <input type="text" id="bill_to_forename" name="bill_to_forename" value="Ken" required>
+
+                            <label for="bill_to_surname">Last Name</label>
+                            <input type="text" id="bill_to_surname" name="bill_to_surname" value="Ngan" required>
+
+                            <label for="bill_to_address_line1">Address</label>
+                            <input type="text" id="bill_to_address_line1" name="bill_to_address_line1"
+                                value="27F Manhattan Place" required>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="bill_to_address_city">City</label>
+                                    <input type="text" id="bill_to_address_city" name="bill_to_address_city"
+                                        value="Kowloon Bay" required>
+                                </div>
+                                <div class="col-3">
+                                    <label for="bill_to_address_country">Country</label>
+                                    <input type="text" id="bill_to_address_country" name="bill_to_address_country"
+                                        value="HK" required>
+                                </div>
+                                <div class="col-3">
+                                    <label for="bill_to_address_postal_code">Zip</label>
+                                    <input type="text" id="bill_to_address_postal_code"
+                                        name="bill_to_address_postal_code" value="00000" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 border-left pl-md-4">
+                            <h5 class="mb-3" style="color: var(--pp-blue-dark);"><i
+                                    class="fa fa-cog mr-2"></i>Transaction Settings</h5>
+
+                            <label for="transaction_type">Transaction Type</label>
+                            <select id="transaction_type" name="transaction_type" required>
+                                <option value="authorization">Authorization</option>
+                                <option value="authorization,create_payment_token">Create Payment Token (Auth)</option>
+                                <option value="sale">Sale</option>
+                                <option value="create_payment_token">Create Token Only</option>
+                            </select>
+
+                            <label for="bill_to_email">Email Address</label>
+                            <input type="email" id="bill_to_email" name="bill_to_email" value="ken@example.com"
+                                required>
+
+                            <label for="bill_to_phone">Phone Number</label>
+                            <input type="text" id="bill_to_phone" name="bill_to_phone" value="4158880000"
+                                onchange="trimNumber(this)">
+
+                            <label for="savedtoken" style="color: var(--pp-blue-bright);">Use a Saved Card</label>
+                            <select id="savedtoken" name="savedtoken" onchange="autoFill()">
+                                <option value="">-- Select a saved card --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-4">Continue to SOP Payment</button>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="container shadow-sm">
+                    <h4 class="mb-4 d-flex justify-content-between align-items-center"
+                        style="color: var(--pp-blue-dark); font-weight: 700;">
+                        <span><i class="fa fa-shopping-cart mr-2"></i>Cart</span>
+                        <span class="price"><i class="fa fa-shopping-cart"></i> <b>4</b></span>
+                    </h4>
+
+                    <table class="table table-borderless" style="width: 100%;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-color);">
+                                <th style="text-align: left; padding: 10px; color: var(--text-primary);">Product</th>
+                                <th style="text-align: right; padding: 10px; color: var(--text-primary);">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 10px;"><a href="#"
+                                        style="color: var(--pp-blue-bright); text-decoration: none; font-weight: 600;">Product
+                                        1</a></td>
+                                <td style="text-align: right; padding: 10px;">$<input type="number" id="product1"
+                                        name="product1" value="1" step=".01" class="cart-input"
+                                        onchange="sumTotalAmount()"></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 10px;"><a href="#"
+                                        style="color: var(--pp-blue-bright); text-decoration: none; font-weight: 600;">Product
+                                        2</a></td>
+                                <td style="text-align: right; padding: 10px;">$<input type="number" id="product2"
+                                        name="product2" value="0" step=".01" class="cart-input"
+                                        onchange="sumTotalAmount()"></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 10px;"><a href="#"
+                                        style="color: var(--pp-blue-bright); text-decoration: none; font-weight: 600;">Product
+                                        3</a></td>
+                                <td style="text-align: right; padding: 10px;">$<input type="number" id="product3"
+                                        name="product3" value="0" step=".01" class="cart-input"
+                                        onchange="sumTotalAmount()"></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 10px;"><a href="#"
+                                        style="color: var(--pp-blue-bright); text-decoration: none; font-weight: 600;">Product
+                                        4</a></td>
+                                <td style="text-align: right; padding: 10px;">$<input type="number" id="product4"
+                                        name="product4" value="0" step=".01" class="cart-input"
+                                        onchange="sumTotalAmount()"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td
+                                    style="text-align: left; padding: 15px; font-weight: 700; color: var(--text-primary); font-size: 18px;">
+                                    Total</td>
+                                <td
+                                    style="text-align: right; padding: 15px; font-weight: 700; color: var(--pp-blue-dark); font-size: 20px;">
+                                    $<input type="number" id="amount" name="amount" value="1.00" step=".01" readonly
+                                        class="total-input">
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="/static/checkout.js"></script>
+<script>
+    // Dictionary mapping for Supabase-backed repository
+    const selectvalue = document.getElementById("savedtoken");
+    const tokens = {{ p| tojson }};
+    const cardMasks = {{ q| tojson }};
+
+    tokens.forEach((token, index) => {
+        const option = document.createElement("option");
+        option.value = token;
+        option.text = `${cardMasks[index]}`;
+        selectvalue.add(option);
+    });
+
+    function autoFill() {
+        const userInfo = selectvalue.value;
+        if (userInfo) {
+            const request = new XMLHttpRequest();
+            request.open("POST", `/views/processUserInfo/${userInfo}`);
+            request.onload = () => {
+                const return_data = JSON.parse(request.responseText);
+                document.getElementById("bill_to_forename").value = return_data.billTo.firstName || "";
+                document.getElementById("bill_to_surname").value = return_data.billTo.lastName || "";
+                document.getElementById("bill_to_address_line1").value = return_data.billTo.address1 || "";
+                document.getElementById("bill_to_address_city").value = return_data.billTo.locality || "";
+                document.getElementById("bill_to_address_country").value = return_data.billTo.country || "";
+                document.getElementById("bill_to_address_postal_code").value = return_data.billTo.postalCode || "";
+                document.getElementById("bill_to_email").value = return_data.billTo.email || "";
+                document.getElementById("bill_to_phone").value = return_data.billTo.phoneNumber || "";
+            };
+            request.send();
+        }
+    }
+</script>
+
+<style>
+    .cart-input {
+        width: 70px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        text-align: right;
+        padding: 4px;
+    }
+
+    .total-input {
+        border: none;
+        background: transparent;
+        text-align: right;
+        font-weight: 700;
+        width: 100px;
+        outline: none;
+        color: var(--pp-blue-dark);
+        font-size: 20px;
+    }
+</style>
+{% endblock %}

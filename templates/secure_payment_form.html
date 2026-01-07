@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid px-4">
+    <h4 class="text-center mb-2" style="color: var(--pp-blue-dark); font-weight: 700;">Secure Payment Entry</h4>
+    <p class="text-center text-muted mb-4 small">Silent Order POST (SOP) Integration</p>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-6 col-md-8">
+            <form name="secure_payment_form" method="post" action="{{ url }}">
+                <div class="container shadow-sm p-4 bg-white rounded-lg">
+                    {% for name, value in fields.items() %}
+                    <input type="hidden" name="{{ name }}" value="{{ value }}" />
+                    {% endfor %}
+                    <input type="hidden" name="signature" value="{{ signature }}" />
+
+                    <h5 class="mb-4" style="color: var(--pp-blue-dark); font-weight: 700;">
+                        <i class="fa fa-lock mr-2"></i>Payment Details
+                    </h5>
+
+                    <label class="text-muted small uppercase font-weight-bold">Accepted Cards</label>
+                    <div class="icon-container mb-4 d-flex align-items-center">
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="visa" name="card_type" class="custom-control-input" value="001"
+                                checked>
+                            <label class="custom-control-label" for="visa">
+                                <i class="fa fa-cc-visa text-navy" style="font-size: 32px;"></i>
+                            </label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="mastercard" name="card_type" class="custom-control-input"
+                                value="002">
+                            <label class="custom-control-label" for="mastercard">
+                                <i class="fa fa-cc-mastercard text-danger" style="font-size: 32px;"></i>
+                            </label>
+                        </div>
+                        <div class="custom-control custom-radio custom-control-inline">
+                            <input type="radio" id="cup" name="card_type" class="custom-control-input" value="062">
+                            <label class="custom-control-label" for="cup">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/UnionPay_logo.svg"
+                                    alt="UnionPay" style="height: 32px;">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="card_number" class="text-muted small uppercase font-weight-bold">Credit Card
+                            Number</label>
+                        <div class="input-group">
+                            <div class="input-icon">
+                                <i class="fa fa-credit-card text-muted"></i>
+                            </div>
+                            <input type="text" id="card_number" name="card_number" class="form-control border-left-0"
+                                placeholder="1111 2222 3333 4444" onchange="trimNumber(this)" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-7">
+                            <div class="form-group">
+                                <label for="card_expiry_date" class="text-muted small uppercase font-weight-bold">Expiry
+                                    Date</label>
+                                <input type="text" id="card_expiry_date" name="card_expiry_date" class="form-control"
+                                    placeholder="MM-YYYY" required>
+                            </div>
+                        </div>
+                        <div class="col-5">
+                            <div class="form-group">
+                                <label for="card_cvn" class="text-muted small uppercase font-weight-bold">CVV</label>
+                                <input type="text" id="card_cvn" name="card_cvn" class="form-control" placeholder="123"
+                                    required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" id="submit" name="submit"
+                            class="btn btn-primary btn-block py-3 font-weight-bold shadow-sm">
+                            Authorize & Continue to CYBS
+                        </button>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <small class="text-muted"><i class="fa fa-shield mr-1"></i> Your payment is processed securely
+                            by CyberSource.</small>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Design Consistency Overrides */
+    .uppercase {
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .text-navy {
+        color: #000080;
+    }
+
+    .btn-primary {
+        border-radius: 50px !important;
+    }
+
+    /* Blue pill style */
+    .input-group-text {
+        border-radius: 4px 0 0 4px;
+    }
+
+    .form-control {
+        border-radius: 4px;
+    }
+
+    .custom-control-label::before,
+    .custom-control-label::after {
+        top: 12px;
+    }
+</style>
+{% endblock %}

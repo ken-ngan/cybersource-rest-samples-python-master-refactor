@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Please wait...</h1>
+
+<p>The request is being processed. You may be redirected to your bank's website. It might take a few seconds.</p>
+<p>Please do not refresh the page or click the "Back" or "Close" button of your browser.</p>
+
+<form id="authentication_form" method="POST" action={{action}}>
+    <input id="referenceId" name="referenceId" type=hidden value={{referenceId}}>
+    <input id="reference_number" name="reference_number" type=hidden value={{reference_number}}>
+    <input id="amount" name="amount" type=hidden value={{amount}}>
+    <input id="currency" name="currency" type=hidden value={{currency}}>
+    <input id="bill_to_forename" name="bill_to_forename" type=hidden value={{bill_to_forename}}>
+    <input id="bill_to_surname" name="bill_to_surname" type=hidden value={{bill_to_surname}}>
+    <input id="bill_to_address_line1" name="bill_to_address_line1" type=hidden value={{bill_to_address_line1}}>
+    <input id="bill_to_address_city" name="bill_to_address_city" type=hidden value={{bill_to_address_city}}>
+    <input id="bill_to_address_postal_code" name="bill_to_address_postal_code" type=hidden value={{bill_to_address_postal_code}}>
+    <input id="bill_to_address_country" name="bill_to_address_country" type=hidden value={{bill_to_address_country}}>
+    <input id="bill_to_email" name="bill_to_email" type=hidden value={{bill_to_email}}>
+    <input id="bill_to_phone" name="bill_to_phone" type=hidden value={{bill_to_phone}}>
+    <input id="googlePayBlob" name="googlePayBlob" type=hidden value={{googlePayBlob}}>
+</form>
+
+<iframe id="cardinal_collection_iframe" name="collectionIframe" height="1" width="1" style="display: none;">
+</iframe>
+<form id="cardinal_collection_form" method="POST" target="collectionIframe" action={{deviceDataCollectionURL}}>
+    <input id="cardinal_collection_form_input" type="hidden" name="JWT" value={{accessToken}}>
+</form>
+<script>
+    window.onload = function() {
+        var cardinalCollectionForm = document.querySelector('#cardinal_collection_form');
+        if(cardinalCollectionForm) {// form exists
+            cardinalCollectionForm.submit();
+        }
+    }
+
+    window.addEventListener("message", function(event) {
+        if (event.origin === "https://centinelapistag.cardinalcommerce.com" || event.origin === "https://centinelapi.cardinalcommerce.com") {
+        console.log("###Success!###")
+        console.log(event.data);
+        var authenticationForm = document.querySelector('#authentication_form');
+        if(authenticationForm) {// form exists
+            authenticationForm.submit();
+        }
+         }  else {
+            console.log("###Failed!!!###");
+         }
+        }, false);
+</script>
+{% endblock %}

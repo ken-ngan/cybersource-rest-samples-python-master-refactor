@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <h4 align="center">Transaction Rejected</h4>
+        <p></p>
+        <div>
+            <p>You are not using an eligible credit card to process the payment. The transaction is cancelled. Please go back to the checkout page and retry your payment.</p>
+        </div>
+        <a href="/views/ticketing-checkout"><button type="submit" class="registerbtn">Back</button>
+    </div>
+</body>
+{% endblock %}

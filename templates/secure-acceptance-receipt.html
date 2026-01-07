@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 align="center">  
+    {% if request.form.get("decision")=="ACCEPT" %}
+    Payment Complete
+    {% else %}
+    Payment Fail
+    {% endif %}
+</h4>
+<p></p>
+<form method="POST">
+    <div class="container">
+        <p>Find below the information on your payment.</p>
+        <hr>
+        <h3>Response</h3>
+        {% for name, value in request.form.items() %}
+        <div class="row">
+            <div class="col-50">                
+                <label for="{{ name }}">{{ name }}</label>
+            </div>
+            <div class="col-50">
+                <p id="{{ name }}" name="{{ name }}" style="margin-bottom: 10px;display: block;word-wrap: break-word;">{{ value }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</form>
+</body>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block content %}
+<iframe id="cardinal_collection_iframe" name="collectionIframe" height="1" width="1" style="display: none;">
+</iframe>
+<form id="cardinal_collection_form" method="POST" target="collectionIframe" action={{deviceDataCollectionURL}}>
+    <input id="cardinal_collection_form_input" type="hidden" name="JWT" value={{accessToken}}>
+</form>
+
+<h4 align="center">Confirm Payment</h4>
+<p></p>
+<form method="POST">
+    <div class="container">
+        <p>Please confirm the payment information before proceed.</p>
+        <hr>
+        <h4>Billing Address</h4>
+        <div class="row">
+            <div class="col-25">
+                <label for="fname">First Name</label>
+                <label for="lname">Last Name</label>
+                <label for="phone">Phone Number</label>
+                <label for="email">Email</label>
+                <label for="adr">Address</label>
+                <label for="city">City</label>
+                <label for="state">Country</label>
+                <label for="zip">Zip</label>
+            </div>
+            <div class="col-75">
+                <p id="fname" name="firstname" style="margin-bottom: 10px;display: block;">
+                    {{session['bill_to_forename']}}</p>
+                <p id="lname" name="lastname" style="margin-bottom: 10px;display: block;">{{session['bill_to_surname']}}
+                </p>
+                <p id="phone" name="phone" style="margin-bottom: 10px;display: block;">{{session['bill_to_phone']}}</p>
+                <p id="email" name="email" style="margin-bottom: 10px;display: block;">{{session['bill_to_email']}}</p>
+                <p id="adr" name="address" style="margin-bottom: 10px;display: block;">
+                    {{session['bill_to_address_line1']}}</p>
+                <p id="city" name="city" style="margin-bottom: 10px;display: block;">{{session['bill_to_address_city']}}
+                </p>
+                <p id="state" name="state" style="margin-bottom: 10px;display: block;">
+                    {{session['bill_to_address_country']}}</p>
+                <p id="zip" name="zip" style="margin-bottom: 10px;display: block;">
+                    {{session['bill_to_address_postal_code']}}</p>
+            </div>
+        </div>
+        <h4>Shipping Address</h4>
+        <div class="row">
+            <div class="col-25">
+                <label for="fname">First Name</label>
+                <label for="fname">Last Name</label>
+                <label for="adr">Address</label>
+                <label for="city">City</label>
+                <label for="state">Country</label>
+                <label for="zip">Zip</label>
+            </div>
+            <div class="col-75">
+                <p id="stfname" name="shipto_firstname" style="margin-bottom: 10px;display: block;">
+                    {{session['ship_to_forename']}}</p>
+                <p id="stlname" name="shipto_lastname" style="margin-bottom: 10px;display: block;">
+                    {{session['ship_to_surname']}}</p>
+                <p id="stadr" name="shipto_address" style="margin-bottom: 10px;display: block;">
+                    {{session['shipToAddress']}}</p>
+                <p id="stcity" name="shopto_city" style="margin-bottom: 10px;display: block;">
+                    {{session['ship_to_address_city']}}</p>
+                <p id="ststate" name="shipto_state" style="margin-bottom: 10px;display: block;">
+                    {{session['ship_to_address_country']}}</p>
+                <p id="stzip" name="shipto_zip" style="margin-bottom: 10px;display: block;">
+                    {{session['ship_to_address_postal_code']}}</p>
+            </div>
+        </div>
+        <h4>Payment</h4>
+        <div class="row">
+            <div class="col-25">
+                <label for="ccnum">Card Number</label>
+                <label for="expmonth">Exp Month</label>
+                <label for="expyear">Exp Year</label>
+                <label for="cvv">CVV <span style="color: red;">*</span></label>
+                <label for="card_type">Card Type</label>
+                <label for="amount">Total Amount</label>
+                <label for="tokenization">Tokenization</label>
+                <label for="savedtoken">Saved Token</label>
+            </div>
+            <div class="col-75">
+                <p id="ccnum" name="card_number" style="margin-bottom: 10px;display: block;">{{session['card_number']}}
+                </p>
+                <p id="expmonth" name="expmonth" style="margin-bottom: 10px;display: block;">{{session['exp_month']}}
+                </p>
+                <p id="expyear" name="expyear" style="margin-bottom: 10px;display: block;">{{session['exp_year']}}</p>
+                <!-- PCI Compliance: CVV is NOT stored in session. User must enter it again for security. -->
+                <input type="text" id="cvv" name="cvv" class="form-control" placeholder="Enter CVV" maxlength="4" required style="width: 100px; margin-bottom: 10px;">
+                <p id="card_type" name="card_type" style="margin-bottom: 10px;display: block;">{{session['card_type']}}
+                </p>
+                <p id="amount" name="amount" style="margin-bottom: 10px;display: block;">{{session['amount']}}</p>
+                <p id="tokenizaton" name="tokenizaton" style="margin-bottom: 10px;display: block;">
+                    {{session['tokenization']}}</p>
+                <p id="savedtoken" name="savedtoken" style="margin-bottom: 10px;display: block;">
+                    {{session['savedtoken']}}</p>
+            </div>
+        </div>
+        <h4>Payer Authentication</h4>
+        <div class="row">
+            <div class="col-25">
+                <label for="referenceId">Reference ID</label>
+            </div>
+            <div class="col-75">
+                <p id="expyear" name="referenceId" style="margin-bottom: 10px;display: block;">
+                    {{session['referenceId']}}</p>
+            </div>
+        </div>
+        <button type="submit" class="registerbtn">Confirm</button>
+    </div>
+</form>
+</body>
+<script>
+    window.onload = function () {
+        var cardinalCollectionForm = document.querySelector('#cardinal_collection_form');
+        if (cardinalCollectionForm) {// form exists
+            cardinalCollectionForm.submit();
+        }
+    }
+
+    window.addEventListener("message", function (event) {
+        if (event.origin === "https://centinelapistag.cardinalcommerce.com") {
+            console.log("###Success!###")
+            console.log(event.data);
+        } else {
+            console.log("###Failed!!!###");
+        }
+    }, false);
+</script>
+{% endblock %}

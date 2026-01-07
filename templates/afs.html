@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 align="center">CyberSource Advanced Fraud Screen (AFS) Service
+</h4>
+<p></p>
+<div class="container" style="border-radius: 5px; background-color: #f2f2f2; padding: 20px;">
+        <div class="row">
+            <div class="col-25">
+                <label for="bin"><b>6-8 digit BIN</b></label>
+                <input type="text" placeholder="41234567" name="bin" id="bin" maxlength="8" onchange="cardNumberGenerator()">
+                <label for="card_number"><b>Generated Card Number</b></label>
+                <input type="text" name="card_number" id="card_number" readonly>
+            </div>
+        </div>
+        <button type="submit" class="registerbtn" onclick="checkAfs()">Send Request</button>
+    <div class="row">
+        <pre name="result" id="result"></pre>
+    </div>
+</div>
+</body>
+
+<script>
+    function cardNumberGenerator() {
+        let bin = document.getElementById("bin").value;
+        let checksum = (10-((bin.charAt(0)*2>=10?-9:0)+bin.charAt(0)*2 + (bin.charAt(2)*2>=10?-9:0)+bin.charAt(2)*2 + (bin.charAt(4)*2>=10?-9:0)+bin.charAt(4)*2 + (bin.charAt(6)*2>=10?-9:0)+bin.charAt(6)*2 + bin.charAt(1)*1 + bin.charAt(3)*1 + bin.charAt(5)*1 + bin.charAt(7)*1)%10)%10
+        document.getElementById("card_number").value = bin.padEnd(15, '0') + checksum;
+        return;
+    }
+
+    function checkAfs() {
+        let  card_number  = document.getElementById("card_number").value;
+        if(card_number!="") {
+            const request = new XMLHttpRequest()
+            request.open("POST", `/views/afs/${card_number}`)
+        
+            request.onload = () => {
+                let data = request.responseText
+                document.getElementById("result").textContent = data
+            }
+            request.send()
+        }
+        return;
+    }
+</script>
+
+{% endblock %}

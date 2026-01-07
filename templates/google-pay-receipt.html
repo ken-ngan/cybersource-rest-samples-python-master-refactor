@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 align="center">  
+    {% if return_data.status=="AUTHORIZED" %}
+    Payment Complete
+    {% else %}
+    Payment Fail
+    {% endif %}
+</h4>
+<p></p>
+<form method="POST">
+    <div class="container">
+        <p>Find below the information on your payment.</p>
+        <hr>
+        <h3>Response</h3>
+        {{ return_data }}
+    </div>
+</form>
+</body>
+{% endblock %}

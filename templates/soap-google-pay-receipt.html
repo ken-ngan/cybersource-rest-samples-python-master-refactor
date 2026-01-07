@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 align="center">  
+    {% if return_data['decision']=="ACCEPT" %}
+    Payment Complete
+    {% else %}
+    Payment Fail
+    {% endif %}
+</h4>
+<p></p>
+<form method="POST">
+    <div class="container">
+        <p>Find below the information on your payment.</p>
+        <hr>
+        <h4>Response</h4>
+        {% for item in return_data %}
+        <div class="row">
+            <div class="col-50">                
+                <label for="{{ item }}">{{ item }}</label>
+            </div>
+            <div class="col-50">
+                <p id="{{ item }}" name="{{ item }}" style="margin-bottom: 10px;display: block;word-wrap: break-word;">{{ return_data[item] }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</form>
+</body>
+{% endblock %}

@@ -1,0 +1,13 @@
+<html>
+    <head>
+        <title>JavaScript POST to CyberSource</title>
+    </head>
+    <body onload="window.document.post_to_cybersource.submit();">
+        <form name="post_to_cybersource" method="post" action="{{ url }}">
+            {% for name, value in fields.items() %}
+                <input type="hidden" name="{{ name }}" value="{{ value }}" />
+            {% endfor %}
+            <input type="hidden" name="signature" value="{{ signature }}" />
+        </form>
+    </body>
+</html>

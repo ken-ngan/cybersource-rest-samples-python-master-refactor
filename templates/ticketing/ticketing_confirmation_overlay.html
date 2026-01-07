@@ -1,0 +1,31 @@
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+      integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="icon" type="image/x-icon" href="/static/apple-touch-icon.png">
+    <link rel="stylesheet" href="/static/styles.css"/>
+</head>
+<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+    <h1>Please wait...</h1>
+
+    <p>The request is being processed. You will be redirected in <span id="timer"></span> seconds.</p>
+    <p>Please do not refresh the page or click the "Back" or "Close" button of your browser.</p>
+</div>
+<script>
+    var i = 3;
+    // Update the count down every 1 second
+    var x = setInterval(function() {
+        document.getElementById("timer").innerHTML = i;
+        i--;
+    }, 1000);
+</script>

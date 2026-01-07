@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid px-4">
+    <h4 class="text-center mb-4" style="color: var(--pp-blue-dark); font-weight: 700;">SOAP Checkout Form</h4>
+
+    <form method="POST" id="payment_form">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="container shadow-sm">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="mb-3" style="color: var(--pp-blue-dark);"><i
+                                    class="fa fa-address-card mr-2"></i>Billing Details</h5>
+
+                            <label for="fname">First Name</label>
+                            <input type="text" id="fname" name="firstname" value="Ken" required>
+
+                            <label for="lname">Last Name</label>
+                            <input type="text" id="lname" name="lastname" value="Ngan" required>
+
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" value="ken@example.com" required>
+
+                            <label for="adr">Address</label>
+                            <input type="text" id="adr" name="address" value="27F Manhattan Place" required>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="city">City</label>
+                                    <input type="text" id="city" name="city" value="Kowloon Bay" required>
+                                </div>
+                                <div class="col-3">
+                                    <label for="state">Country</label>
+                                    <input type="text" id="state" name="state" value="HK" required>
+                                </div>
+                                <div class="col-3">
+                                    <label for="zip">Zip</label>
+                                    <input type="text" id="zip" name="zip" value="00000" required>
+                                </div>
+                            </div>
+
+                            <div class="mt-3 custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="sameadr" name="sameadr"
+                                    onclick="showShippingInfo()">
+                                <label class="custom-control-label" for="sameadr" style="display: inline;">Shipping
+                                    address same as billing</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 border-left pl-md-4">
+                            <h5 class="mb-3" style="color: var(--pp-blue-dark);"><i
+                                    class="fa fa-credit-card mr-2"></i>Payment Information</h5>
+
+                            <label>Accepted Cards</label>
+                            <div class="icon-container mb-3">
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="visa" name="accepted_card" class="custom-control-input"
+                                        value="001" checked>
+                                    <label class="custom-control-label" for="visa"><i class="fa fa-cc-visa"
+                                            style="color:navy; font-size: 24px;"></i></label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="mastercard" name="accepted_card"
+                                        class="custom-control-input" value="002">
+                                    <label class="custom-control-label" for="mastercard"><i class="fa fa-cc-mastercard"
+                                            style="color:red; font-size: 24px;"></i></label>
+                                </div>
+                                <div class="custom-control custom-radio custom-control-inline">
+                                    <input type="radio" id="unionpay" name="accepted_card" class="custom-control-input"
+                                        value="062">
+                                    <label class="custom-control-label" for="unionpay">
+                                        <img src="https://upload.wikimedia.org/wikipedia/commons/1/1b/UnionPay_logo.svg"
+                                            alt="UnionPay"
+                                            style="height: 20px; vertical-align: middle; margin-top: -8px;">
+                                    </label>
+                                </div>
+                            </div>
+
+                            <label for="phone">Phone Number</label>
+                            <input type="text" id="phone" name="phone" value="4158880000" onchange="trimNumber(this)"
+                                required>
+
+                            <label for="saved_token" style="color: var(--pp-blue-bright);">Saved Card</label>
+                            <select id="saved_token" name="saved_token" onchange="autoFill()">
+                                <option value="">-- Manual Entry --</option>
+                            </select>
+
+                            <label for="ccnum">Card Number</label>
+                            <div class="input-group-soap">
+                                <input type="text" id="ccnum" name="card_number" value="4000000000002503"
+                                    onchange="trimNumber(this)" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6">
+                                    <label for="exp_month">Expiration Month</label>
+                                    <select id="exp_month" name="exp_month" required>
+                                        <option value="12" selected>12</option>
+                                        {% for m in range(1, 12) %}
+                                        <option value="{{ '%02d' % m }}">{{ m }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label for="exp_year">Year</label>
+                                    <input type="text" id="exp_year" name="exp_year" value="2030" required>
+                                </div>
+                            </div>
+
+                            <div class="mt-2 custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input" id="tokenization"
+                                    name="tokenization" checked onchange="checkTokenization()">
+                                <label class="custom-control-label" for="tokenization" style="display: inline;">Save
+                                    card for future use</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="stinfo" style="display:none;" class="mt-4 pt-4 border-top">
+                        <h5 class="mb-3" style="color: var(--pp-blue-dark);">Shipping Address</h5>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="stfname">First Name</label>
+                                <input type="text" id="stfname" name="shipto_firstname" value="Ken">
+                                <label for="stlname">Last Name</label>
+                                <input type="text" id="stlname" name="shipto_lastname" value="Ngan">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="stadr">Address</label>
+                                <input type="text" id="stadr" name="shipto_address" value="27F Manhattan Place">
+                                <div class="row">
+                                    <div class="col-6"><label>City</label><input type="text" name="shipto_city"
+                                            value="Kowloon Bay"></div>
+                                    <div class="col-3"><label>Country</label><input type="text" name="shipto_state"
+                                            value="HK"></div>
+                                    <div class="col-3"><label>Zip</label><input type="text" name="shipto_zip"
+                                            value="00000"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary mt-4">Checkout with SOAP API</button>
+                    <div id="google-pay" class="mt-3" style="width: 100%; height: 48px;"></div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="container shadow-sm mb-4">
+                    <h4 class="mb-4 d-flex justify-content-between align-items-center"
+                        style="color: var(--pp-blue-dark); font-weight: 700;">
+                        <span><i class="fa fa-shopping-cart mr-2"></i>Cart</span>
+                        <span class="badge badge-primary badge-pill"
+                            style="background-color: var(--pp-blue-bright);">4</span>
+                    </h4>
+
+                    <table class="table table-borderless" style="width: 100%;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-color);">
+                                <th style="text-align: left; padding: 10px;">Product</th>
+                                <th style="text-align: right; padding: 10px;">Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 10px;"><a href="#"
+                                        style="color: var(--pp-blue-bright); text-decoration: none; font-weight: 600;">Product
+                                        1</a></td>
+                                <td style="text-align: right; padding: 10px;">$<input type="number" id="product1"
+                                        name="product1" value="1" step=".01" class="cart-input"
+                                        onchange="sumTotalAmount()"></td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border-color);">
+                                <td style="padding: 10px;"><a href="#"
+                                        style="color: var(--pp-blue-bright); text-decoration: none; font-weight: 600;">Product
+                                        2</a></td>
+                                <td style="text-align: right; padding: 10px;">$<input type="number" id="product2"
+                                        name="product2" value="2" step=".01" class="cart-input"
+                                        onchange="sumTotalAmount()"></td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td style="text-align: left; padding: 15px; font-weight: 700; font-size: 18px;">Total
+                                </td>
+                                <td
+                                    style="text-align: right; padding: 15px; font-weight: 700; color: var(--pp-blue-dark); font-size: 20px;">
+                                    $<input type="number" id="amount" name="amount" value="3.00" step=".01" readonly
+                                        class="total-input">
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <div class="container shadow-sm">
+                    <h5 style="color: var(--pp-blue-dark); font-weight: 700;"><i
+                            class="fa fa-refresh mr-2"></i>Recurring Bill</h5>
+                    <hr>
+                    <div class="form-group">
+                        <label>Frequency</label>
+                        <select id="recurring_frequency" name="recurring_frequency" class="form-control">
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly" selected>Monthly</option>
+                            <option value="annually">Annually</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount ($)</label>
+                        <input type="number" id="recurring_amount" name="recurring_amount" class="form-control"
+                            placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input type="date" id="recurring_start_date" name="recurring_start_date" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="/static/checkout.js"></script>
+<script src="/static/SOAPGooglePay.js"></script>
+<script async src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()"></script>
+
+<script>
+    // Map tokens for saved cards using the improved rest.html logic
+    const selectvalue = document.getElementById("saved_token");
+    const tokens = {{ p | tojson }};
+    const cardMasks = {{ q | tojson }};
+
+    tokens.forEach((token, index) => {
+        const option = document.createElement("option");
+        option.value = token;
+        option.text = `${cardMasks[index]}`;
+        selectvalue.add(option);
+    });
+
+    function autoFill() {
+        const userInfo = selectvalue.value;
+        if (userInfo) {
+            const request = new XMLHttpRequest();
+            request.open("POST", `/views/processUserInfo/${userInfo}`);
+            request.onload = () => {
+                const return_data = JSON.parse(request.responseText);
+                document.getElementById("fname").value = return_data.billTo.firstName || "";
+                document.getElementById("lname").value = return_data.billTo.lastName || "";
+                document.getElementById("adr").value = return_data.billTo.address1 || "";
+                document.getElementById("city").value = return_data.billTo.locality || "";
+                document.getElementById("state").value = return_data.billTo.country || "";
+                document.getElementById("zip").value = return_data.billTo.postalCode || "";
+                document.getElementById("email").value = return_data.billTo.email || "";
+                document.getElementById("phone").value = return_data.billTo.phoneNumber || "";
+            }
+            request.send();
+        }
+    }
+</script>
+
+<style>
+    /* Adopted styles from rest.html */
+    .cart-input {
+        width: 70px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        text-align: right;
+        padding: 4px;
+    }
+
+    .total-input {
+        border: none;
+        background: transparent;
+        text-align: right;
+        font-weight: 700;
+        width: 100px;
+        outline: none;
+        color: var(--pp-blue-dark);
+        font-size: 20px;
+    }
+
+    /* Standardized radio icon placement */
+    .icon-container .custom-control-label::before,
+    .icon-container .custom-control-label::after {
+        top: 12px;
+    }
+</style>
+{% endblock %}

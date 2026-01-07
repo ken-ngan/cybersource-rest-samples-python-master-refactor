@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 align="center" class="mt-4">Transaction Details</h4>
+
+<div class="container mt-4"
+    style="border-radius: 8px; background-color: #ffffff; padding: 30px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+    <p class="text-muted">Detailed summary for Reference Number: <strong>{{
+            return_data.client_reference_information.code }}</strong></p>
+    <hr>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h5>Status & Identification</h5>
+            <dl class="row">
+                <dt class="col-sm-5">Result:</dt>
+                <dd class="col-sm-7">
+                    {% set app_info = return_data.get('application_information', {}) %}
+                    {% set apps = app_info.get('applications', [{}]) %}
+                    {{ apps[0].get('r_flag') }}
+                </dd>
+
+                <dt class="col-sm-5">Transaction ID:</dt>
+                <dd class="col-sm-7"><code>{{ return_data.get('id') }}</code></dd>
+
+                <dt class="col-sm-5">Submission Time:</dt>
+                <dd class="col-sm-7">{{ return_data.submit_time_utc }}</dd>
+            </dl>
+        </div>
+
+        <div class="col-md-6">
+            <h5>Payment Information</h5>
+            <dl class="row">
+                <dt class="col-sm-5">Amount:</dt>
+                <dd class="col-sm-7">
+                    <strong>
+                        {{ return_data.order_information.amount_details.currency or "HKD" }}
+                        {{ return_data.order_information.amount_details.total_amount or "0.00" }}
+                    </strong>
+                </dd>
+
+                <dt class="col-sm-5">Card Ending In:</dt>
+                <dd class="col-sm-7">**** {{ return_data.payment_information.card.suffix }}</dd>
+
+                <dt class="col-sm-5">Card Type:</dt>
+                <dd class="col-sm-7">{{ return_data.payment_information.card.type }}</dd>
+            </dl>
+        </div>
+    </div>
+
+    <hr>
+
+    <div class="mt-3">
+        <button class="btn btn-outline-secondary btn-sm" type="button" data-toggle="collapse" data-target="#rawJson"
+            aria-expanded="false">
+            View Technical Details (JSON)
+        </button>
+        <div class="collapse mt-3" id="rawJson">
+            <div class="card card-body bg-light">
+                <pre style="font-size: 11px; color: #d63384;">{{ return_data | safe }}</pre>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <a href="{{ url_for('views.profile') }}" class="btn btn-primary">Back to History</a>
+    </div>
+</div>
+{% endblock %}

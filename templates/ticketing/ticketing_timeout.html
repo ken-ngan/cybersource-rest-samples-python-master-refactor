@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+        <h4 align="center">Reservation Expired</h4>
+        <p></p>
+        <div>
+            <p>The transaction failed and the seat is released. Please go back to the checkout page and retry your payment.
+        </div>
+        <a href="/views/ticketing-checkout"><button type="submit" class="registerbtn">Back</button>
+    </div>
+</body>
+{% endblock %}

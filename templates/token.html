@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 align="center">Saved Token Information</h4>
+<p></p>
+<div class="container" style="border-radius: 5px; background-color: #f2f2f2; padding: 20px;">
+    <table class="table" id="token" style="font-size: 14px;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>MID</th>
+                <th>Customer ID</th>
+                <th>Instrument Identifier ID</th>
+                <th>Credit Card No</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in paymentInstruments %}
+            <tr>
+                <td>{{ row.id }}</td>
+                <td>{{ row.mid }}</td>
+                <td>{{ row.payment_instrument_id }}</td>
+                <td>{{ row.instrument_identifier_id }}</td>
+                <td>{{ row.card_number }}</td>
+                <td>
+                    <button type="button" class="close" onclick="deleteToken('{{ row.id }}')">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<p></p>
+<h4 align="center">Transaction History</h4>
+<p></p>
+<div class="container" style="border-radius: 5px; background-color: #f2f2f2; padding: 14px;">
+    <table class="table" id="transaction" style="font-size: 14px;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>MID</th>
+                <th>Reference Number</th>
+                <th>Transaction ID</th>
+                <th>Total Amount</th>
+                <th>Card Number</th>
+                <th>ECI</th>
+                <th>Void</th>
+                <th>Refund</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in transactions[::-1] %}
+            <tr>
+                <td>{{ row.id }}</td>
+                <td>{{ row.mid }}</td>
+                <td><a href="{{ url_for('views.transactionQuery', reference_number=row.reference_number) }}">{{
+                        row.reference_number }}</a></td>
+                <td>{{ row.transaction_id }}</td>
+                <td>{{ row.amount }}</td>
+                <td>{{ row.card_number }}</td>
+                <td>{{ row.eci_raw }}</td>
+                <td>
+                    <button type="button" class="close" onclick="voidPayment('{{ row.id }}')">
+                        <span aria-hidden="true">&empty;</span>
+                    </button>
+                </td>
+                <td>
+                    <button type="button" class="close" onclick="refundPayment('{{ row.id }}')">
+                        <span aria-hidden="true">&otimes;</span>
+                    </button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<script>
+    // Added page refresh to these functions so the user sees the change immediately
+    function deleteToken(tokenId) {
+        if (confirm("Are you sure you want to delete this token?")) {
+            const request = new XMLHttpRequest();
+            request.open("POST", `/views/deleteToken/${tokenId}`);
+            request.onload = () => window.location.reload();
+            request.send();
+        }
+    }
+
+    function voidPayment(id) {
+        const request = new XMLHttpRequest();
+        request.open("POST", `/views/voidPayment/${id}`);
+        request.onload = () => window.location.reload();
+        request.send();
+    }
+
+    function refundPayment(id) {
+        const request = new XMLHttpRequest();
+        request.open("POST", `/views/refundPayment/${id}`);
+        request.onload = () => window.location.reload();
+        request.send();
+    }
+</script>
+{% endblock %}

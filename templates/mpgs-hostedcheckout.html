@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 align="center">MPGS Hosted Checkout Form</h4>
+<p></p>
+<form id="payment_form" method="POST">
+    <div class="row">
+    <div class="col-75">
+        <div class="container">
+            <div class="row">
+                <div id="paymentDetailsSection" class="col-50">
+                    </h4>Billing Address</h4>
+                    <label for="bill_to_forename"><i class="fa fa-user"></i> First Name</label>
+                    <input type="text" id="bill_to_forename" name="bill_to_forename" placeholder="John" value="Ken" required>
+                    <label for="bill_to_surname"><i class="fa fa-user"></i> Last Name</label>
+                    <input type="text" id="bill_to_surname" name="bill_to_surname" placeholder="Doe" value="Ngan" required>
+                    <label for="bill_to_address_line1"><i class="fa fa-address-card-o"></i> Address</label>
+                    <input type="text" id="bill_to_address_line1" name="bill_to_address_line1" placeholder="542 W. 15th Street" value="27F Manhattan Place" required>
+                    <label for="bill_to_address_city"><i class="fa fa-institution"></i> City</label>
+                    <input type="text" id="bill_to_address_city" name="bill_to_address_city" placeholder="New York" value="Kowloon Bay" required>
+                    <div class="row">
+                        <div class="col-50">
+                            <label for="bill_to_address_country">Country</label>
+                            <input type="text" id="bill_to_address_country" name="bill_to_address_country" placeholder="NY" value="HK" required>
+                        </div>
+                        <div class="col-50">
+                            <label for="bill_to_address_postal_code">Zip</label>
+                            <input type="text" id="bill_to_address_postal_code" name="bill_to_address_postal_code" placeholder="10001" value="00000" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-50">
+                    <h4>Payment</h4>
+                    <label for="transaction_type"> Transaction Type</label>
+                    <select id="transaction_type" name="transaction_type" required>
+                        <option value="authorization">Authorization</option>
+                        <option value="authorization,create_payment_token">Create Payment Token (Authorization)</option>
+                        <option value="authorization,update_payment_token">Update Payment Token (Authorization)</option>
+                        <option value="sale">Sale</option>
+                        <option value="sale,create_payment_token">Create Payment Token (Sale)</option>
+                        <option value="sale,update_payment_token">Update Payment Token (Sale)</option>
+                        <option value="create_payment_token">Create Payment Token</option>
+                        <option value="update_payment_token">Update Payment Token</option>
+                    </select>
+                    <label for="bill_to_email"><i class="fa fa-envelope"></i> Email</label>
+                    <input type="text" id="bill_to_email" name="bill_to_email" placeholder="john@example.com" value="ken@example.com" required>
+                    <label for="bill_to_phone"><i class="fa fa-phone"></i> Phone Number</label>
+                    <input type="text" id="bill_to_phone" name="bill_to_phone" placeholder="4158880000" value="4158880000" onchange="trimNumber(this)">
+                    <label for="savedtoken">Saved Token</label>
+                    <select id="savedtoken" name="savedtoken" onchange="autoFill()">
+                        <option></option>
+                    </select>
+                </div>
+            </div>
+            <input type="submit" id="submit" name="submit" value="Continue to checkout" class="btn">
+        </div>
+    </div>
+    <div class="col-25">
+        <div class="container">
+        <h5>Cart <span class="price" style="color:black"><i class="fa fa-shopping-cart"></i> <b>4</b></span></h5>
+        <p><a href="#">Product 1</a> <span class="price">$<input type="number" id="product1" name="product1" value="1" step=".01" onchange="sumTotalAmount()"></span></p>
+        <p><a href="#">Product 2</a> <span class="price">$<input type="number" id="product2" name="product2" value="2" step=".01" onchange="sumTotalAmount()"></span></p>
+        <p><a href="#">Product 3</a> <span class="price">$<input type="number" id="product3" name="product3" value="3" step=".01" onchange="sumTotalAmount()"></span></p>
+        <p><a href="#">Product 4</a> <span class="price">$<input type="number" id="product4" name="product4" value="4" step=".01" onchange="sumTotalAmount()"></span></p>
+        <hr>
+        <p>Total <span class="price" style="color:black"><b>$<input type="number" id="amount" name="amount" value="10" step=".01" readonly></b></span></p>
+        </div>
+    </div>
+    </div>
+</form>
+
+</body>
+<script  src="/static/checkout.js"></script>
+<script>
+    function autoFill() {
+        let  userInfo  = document.getElementById("savedtoken").value;
+        if(userInfo!="") {
+            const request = new XMLHttpRequest()
+            request.open("POST", `/views/processUserInfo/${userInfo}`)
+        
+            request.onload = () => {
+                let return_data = JSON.parse(request.responseText);
+                document.getElementById("bill_to_forename").value = return_data.billTo.firstName;
+                document.getElementById("bill_to_surname").value = return_data.billTo.lastName;
+                document.getElementById("bill_to_address_line1").value = return_data.billTo.address1;
+                document.getElementById("bill_to_address_city").value = return_data.billTo.locality;
+                document.getElementById("bill_to_address_country").value = return_data.billTo.country;
+                document.getElementById("bill_to_address_postal_code").value = return_data.billTo.postalCode;
+                document.getElementById("bill_to_email").value = return_data.billTo.email;
+                document.getElementById("bill_to_phone").value = return_data.billTo.phoneNumber;
+            }
+            request.send()
+        }
+        return;
+    }
+</script>
+{% endblock %}

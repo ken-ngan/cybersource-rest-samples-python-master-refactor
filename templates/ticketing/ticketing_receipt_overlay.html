@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container-fluid px-4 py-4">
+    {% if transactions and transactions[0].decision == "ACCEPT" and transactions[0].reason_code == "100" %}
+    <div class="alert alert-success shadow-sm text-center py-4 mb-4">
+        <h4 class="font-weight-bold mb-3"><i class="fa fa-check-circle mr-2"></i>Your order has been placed
+            successfully!</h4>
+        <p class="mb-0">Your reference number is <strong>{{ transactions[0].reference_number }}</strong>.</p>
+        <p class="small">A confirmation of your order and your e-tickets will be sent to your email address shortly.</p>
+    </div>
+    {% else %}
+    <div class="alert alert-danger shadow-sm text-center py-4 mb-4">
+        <h4 class="font-weight-bold mb-3"><i class="fa fa-exclamation-triangle mr-2"></i>Payment Unsuccessful</h4>
+        <p class="mb-0">Your transaction was declined. (Reason Code: {{ transactions[0].reason_code if transactions else
+            'Unknown' }})</p>
+        <p class="small">Please contact your bank for details or retry with a different payment method.</p>
+    </div>
+    {% endif %}
+
+    <div class="container shadow-sm bg-white p-4 rounded-lg">
+        <h5 class="mb-4" style="color: var(--pp-blue-dark); font-weight: 700;">
+            <i class="fa fa-file-text-o mr-2"></i>Payment Information Summary
+        </h5>
+
+        <div class="table-responsive">
+            <table class="table table-hover" id="transaction_summary" style="font-size: 0.9rem;">
+                <thead class="bg-light">
+                    <tr>
+                        <th class="border-top-0">Reference Code</th>
+                        <th class="border-top-0">Transaction ID</th>
+                        <th class="border-top-0">Amount (HKD)</th>
+                        <th class="border-top-0">Card Number</th>
+                        <th class="border-top-0 text-center">Decision</th>
+                        <th class="border-top-0 text-center">ECI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in transactions %}
+                    <tr>
+                        <td class="align-middle font-weight-bold">
+                            <a href="{{ url_for('views.profile') }}" style="color: var(--pp-blue-bright);">{{
+                                row.reference_number }}</a>
+                        </td>
+                        <td class="align-middle text-muted small">{{ row.transaction_id }}</td>
+                        <td class="align-middle font-weight-bold">${{ row.amount }}</td>
+                        <td class="align-middle">{{ row.card_number }}</td>
+                        <td class="align-middle text-center">
+                            <span
+                                class="badge badge-pill {{ 'badge-success' if row.decision == 'ACCEPT' else 'badge-danger' }}">
+                                {{ row.decision }}
+                            </span>
+                        </td>
+                        <td class="align-middle text-center text-muted">{{ row.eciRaw or 'N/A' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="mt-4 d-flex justify-content-between align-items-center">
+            <a href="{{ url_for('views.cybs_rest') }}" class="text-muted"><i class="fa fa-arrow-left mr-1"></i> Back to
+                Playground</a>
+            <button onclick="window.print()" class="btn btn-outline-primary btn-sm rounded-pill px-4">
+                <i class="fa fa-print mr-1"></i> Print Receipt
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Styling to match the PayPal-style card structure */
+    .table thead th {
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 0.75rem;
+        color: #6b7c93;
+    }
+
+    .badge-pill {
+        padding: 0.4em 1em;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
